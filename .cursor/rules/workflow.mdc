@@ -1,0 +1,28 @@
+---
+description: Working agreement for this technical task
+alwaysApply: true
+---
+
+# Working agreement
+
+## Stack
+- Use a .NET 8 class library + xUnit test project. Nothing else.
+- Never add a CLI, HTTP endpoint, UI, or NuGet package I did not ask for.
+
+## Code style
+- Use 'decimal' for all money. Never use 'double' or 'float'.
+- Use records for data. One public entry point for the behaviour (the calculator); helpers stay private or internal.
+- No placeholder code, no TODOs, no extra design "just in case".
+- Refactor existing code only when the current requirement demands it.
+
+## Process
+- TDD: write the failing tests for the current requirement first, then the smallest implementation that passes.
+- Implement only what the current message asks. Do not build ahead of the requirement, even if you can guess what comes next.
+- Do not tidy or refactor code unrelated to the current requirement.
+- If a requirement is ambiguous, stop and ask me one question instead of guessing.
+- Be ruthless in your approach while getting the steps/task done.
+
+## Boundaries
+- I run git. Never commit, never push. Propose a one-line commit message when tests are green.
+- Don't edit the README; I will be adding the content for it.
+---
