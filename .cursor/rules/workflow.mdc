@@ -14,6 +14,9 @@ alwaysApply: true
 - Use records for data. One public entry point for the behaviour (the calculator); helpers stay private or internal.
 - No placeholder code, no TODOs, no extra design "just in case".
 - Refactor existing code only when the current requirement demands it.
+- Add short inline comments where a pricing rule needs a quick reminder.
+- In tests, one short comment is fine for a boundary or an assumption.
+- Do not comment on every line. Clear names first; comments only when they help.
 
 ## Process
 - TDD: write the failing tests for the current requirement first, then the smallest implementation that passes.
@@ -21,6 +24,7 @@ alwaysApply: true
 - Do not tidy or refactor code unrelated to the current requirement.
 - If a requirement is ambiguous, stop and ask me one question instead of guessing.
 - Be ruthless in your approach while getting the steps/task done.
+- Add short inline comments where a pricing rule needs a quick reminder
 
 ## Boundaries
 - I run git. Never commit, never push. Propose a one-line commit message when tests are green.
