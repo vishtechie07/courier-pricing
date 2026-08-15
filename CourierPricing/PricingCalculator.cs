@@ -8,9 +8,13 @@ public record Bill(IReadOnlyList<Line> Lines, decimal Total);
 
 public class PricingCalculator
 {
-    public Bill Price(IReadOnlyList<Parcel> parcels)
+    public Bill Price(IReadOnlyList<Parcel> parcels, bool speedyShipping = false)
     {
         var lines = parcels.Select(ToLine).ToList();
+        var subtotal = lines.Sum(l => l.Cost);
+        // Speedy doubles the order via its own line; skip when there are no parcels
+        if (speedyShipping && lines.Count > 0)
+            lines.Add(new Line("Speedy shipping", "Speedy shipping", subtotal));
         return new Bill(lines, lines.Sum(l => l.Cost));
     }
 

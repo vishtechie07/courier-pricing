@@ -45,4 +45,40 @@ public class PricingCalculatorTests
         Assert.Empty(bill.Lines);
         Assert.Equal(0, bill.Total);
     }
+
+    [Fact]
+    public void Speedy_shipping_adds_a_line_equal_to_the_parcel_subtotal()
+    {
+        var bill = _calculator.Price([new Parcel(9, 9, 9, 0)], speedyShipping: true);
+
+        Assert.Equal([3, 3], bill.Lines.Select(l => l.Cost));
+        Assert.Equal("Speedy shipping", bill.Lines[1].Description);
+        Assert.Equal(6, bill.Total);
+    }
+
+    [Fact]
+    public void Speedy_shipping_does_not_change_parcel_line_costs()
+    {
+        var bill = _calculator.Price(
+        [
+            new Parcel(9, 9, 9, 0),
+            new Parcel(10, 1, 1, 0),
+            new Parcel(50, 1, 1, 0),
+            new Parcel(100, 1, 1, 0)
+        ], speedyShipping: true);
+
+        Assert.Equal([3, 8, 15, 25, 51], bill.Lines.Select(l => l.Cost));
+        Assert.Equal("Speedy shipping", bill.Lines[4].Description);
+        Assert.Equal(102, bill.Total);
+    }
+
+    [Fact]
+    public void Empty_order_with_speedy_on_has_no_lines()
+    {
+        // No parcels means no Speedy line either
+        var bill = _calculator.Price([], speedyShipping: true);
+
+        Assert.Empty(bill.Lines);
+        Assert.Equal(0, bill.Total);
+    }
 }
