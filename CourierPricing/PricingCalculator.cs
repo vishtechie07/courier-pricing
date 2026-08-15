@@ -20,17 +20,21 @@ public class PricingCalculator
 
     private static Line ToLine(Parcel parcel)
     {
-        var (type, cost) = Classify(parcel);
+        var (type, cost, weightLimit) = Classify(parcel);
+        var over = parcel.Weight - weightLimit;
+        // $2 per kg over the size limit; exactly at the limit is free
+        if (over > 0)
+            cost += over * 2m;
         return new Line($"{type} parcel", type, cost);
     }
 
-    private static (string Type, decimal Cost) Classify(Parcel parcel)
+    private static (string Type, decimal Cost, decimal WeightLimit) Classify(Parcel parcel)
     {
-        // All three sides must be strictly under the band limit; weight is unused
-        if (AllUnder(parcel, 10)) return ("Small", 3m);
-        if (AllUnder(parcel, 50)) return ("Medium", 8m);
-        if (AllUnder(parcel, 100)) return ("Large", 15m);
-        return ("XL", 25m);
+        // All three sides must be strictly under the band limit
+        if (AllUnder(parcel, 10)) return ("Small", 3m, 1m);
+        if (AllUnder(parcel, 50)) return ("Medium", 8m, 3m);
+        if (AllUnder(parcel, 100)) return ("Large", 15m, 6m);
+        return ("XL", 25m, 10m);
     }
 
     private static bool AllUnder(Parcel parcel, int limit) =>

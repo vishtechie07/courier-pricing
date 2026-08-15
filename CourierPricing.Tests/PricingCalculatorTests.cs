@@ -13,7 +13,7 @@ public class PricingCalculatorTests
     public void Prices_a_single_parcel_by_size(
         int length, int width, int height, string type, int cost)
     {
-        var bill = _calculator.Price([new Parcel(length, width, height, 0)]); // weight unused
+        var bill = _calculator.Price([new Parcel(length, width, height, 0)]);
 
         var line = Assert.Single(bill.Lines);
         Assert.Equal(type, line.Type);
@@ -80,5 +80,42 @@ public class PricingCalculatorTests
 
         Assert.Empty(bill.Lines);
         Assert.Equal(0, bill.Total);
+    }
+
+    // Exactly at the size weight limit has no extra fee
+    [Theory]
+    [InlineData(9, 9, 9, 1, 3)]
+    [InlineData(10, 1, 1, 3, 8)]
+    [InlineData(50, 1, 1, 6, 15)]
+    [InlineData(100, 1, 1, 10, 25)]
+    public void No_overweight_fee_at_the_weight_limit(
+        int length, int width, int height, double weight, int cost)
+    {
+        var bill = _calculator.Price([new Parcel(length, width, height, (decimal)weight)]);
+
+        Assert.Equal(cost, Assert.Single(bill.Lines).Cost);
+        Assert.Equal(cost, bill.Total);
+    }
+
+    // $2 per kg over the limit, including a half kg
+    [Theory]
+    [InlineData(2, 5)]
+    [InlineData(1.5, 4)]
+    public void Adds_overweight_fee_to_the_parcel_line(double weight, int cost)
+    {
+        var bill = _calculator.Price([new Parcel(9, 9, 9, (decimal)weight)]);
+
+        Assert.Equal(cost, Assert.Single(bill.Lines).Cost);
+        Assert.Equal(cost, bill.Total);
+    }
+
+    [Fact]
+    public void Speedy_uses_parcel_prices_after_overweight()
+    {
+        var bill = _calculator.Price([new Parcel(9, 9, 9, 2)], speedyShipping: true);
+
+        Assert.Equal([5, 5], bill.Lines.Select(l => l.Cost));
+        Assert.Equal("Speedy shipping", bill.Lines[1].Description);
+        Assert.Equal(10, bill.Total);
     }
 }
