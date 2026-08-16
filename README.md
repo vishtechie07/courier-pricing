@@ -56,5 +56,5 @@ Separately I would reject invalid input (negative size or weight). I left that o
 ## Self-evaluation
 
 1. Size, weight, Heavy, and Speedy in one calculator is fine for this test. In a real service I would split it.
-2. Speedy uses the same `Line` record as a parcel (`Description`, `Type`, `Cost`) with type `"Speedy shipping"`. It works. A fee should not look like a parcel.
-3. I skipped discounts so the priced rules stayed solid. The cost is no automated test for the $18 grouping case.
+2. Speedy uses the same kind of bill line as a parcel. It's "type" is "Speedy shipping" instead of something like Small or Medium. In a real API, I would treat the fee lines separately so "type" only means parcel type, not a shipping surcharge.
+3. I skipped discounts so the priced rules stayed solid. The cost is there is no automated test for the $18 grouping case.
