@@ -118,4 +118,45 @@ public class PricingCalculatorTests
         Assert.Equal("Speedy shipping", bill.Lines[1].Description);
         Assert.Equal(10, bill.Total);
     }
+
+    [Fact]
+    public void Uses_Heavy_when_it_is_cheaper_than_normal()
+    {
+        var bill = _calculator.Price([new Parcel(10, 10, 10, 30)]);
+
+        var line = Assert.Single(bill.Lines);
+        Assert.Equal("Heavy", line.Type);
+        Assert.Equal(50, line.Cost);
+    }
+
+    [Fact]
+    public void Keeps_size_type_when_normal_is_cheaper()
+    {
+        var bill = _calculator.Price([new Parcel(1, 1, 1, 0)]);
+
+        var line = Assert.Single(bill.Lines);
+        Assert.Equal("Small", line.Type);
+        Assert.Equal(3, line.Cost);
+    }
+
+    [Fact]
+    public void Heavy_adds_one_dollar_per_kg_over_50()
+    {
+        var bill = _calculator.Price([new Parcel(10, 10, 10, 51)]);
+
+        var line = Assert.Single(bill.Lines);
+        Assert.Equal("Heavy", line.Type);
+        Assert.Equal(51, line.Cost);
+    }
+
+    [Fact]
+    public void Tie_keeps_the_size_type()
+    {
+        // Medium at 24 kg is $50 either way
+        var bill = _calculator.Price([new Parcel(10, 1, 1, 24)]);
+
+        var line = Assert.Single(bill.Lines);
+        Assert.Equal("Medium", line.Type);
+        Assert.Equal(50, line.Cost);
+    }
 }

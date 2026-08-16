@@ -20,12 +20,29 @@ public class PricingCalculator
 
     private static Line ToLine(Parcel parcel)
     {
+        var (type, cost) = NormalPrice(parcel);
+        var heavy = HeavyPrice(parcel.Weight);
+        // Cheaper of normal vs Heavy; a tie keeps the size type
+        if (heavy < cost)
+            return new Line("Heavy parcel", "Heavy", heavy);
+        return new Line($"{type} parcel", type, cost);
+    }
+
+    private static (string Type, decimal Cost) NormalPrice(Parcel parcel)
+    {
         var (type, cost, weightLimit) = Classify(parcel);
         var over = parcel.Weight - weightLimit;
         // $2 per kg over the size limit; exactly at the limit is free
         if (over > 0)
             cost += over * 2m;
-        return new Line($"{type} parcel", type, cost);
+        return (type, cost);
+    }
+
+    private static decimal HeavyPrice(decimal weight)
+    {
+        // $50 up to 50 kg, then $1 per kg over 50
+        var over = weight - 50m;
+        return over > 0 ? 50m + over : 50m;
     }
 
     private static (string Type, decimal Cost, decimal WeightLimit) Classify(Parcel parcel)
